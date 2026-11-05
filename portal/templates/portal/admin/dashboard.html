@@ -1,0 +1,61 @@
+{% extends 'portal/admin/base_admin.html' %}
+{% block titulo %}Resumen{% endblock %}
+{% block contenido %}
+<div class="encabezado"><div><h1>Buen día, {{ request.user.first_name }}</h1><p class="sub">{{ hoy }}</p></div></div>
+
+<section class="tarjetas">
+  <div class="tarjeta"><span>Colaboradores activos</span><strong>{{ activos }}</strong></div>
+  <div class="tarjeta"><span>Asistencias de hoy</span><strong>{{ asistencias_hoy }}</strong><small>de {{ programados_hoy }} programados</small></div>
+  <div class="tarjeta"><span>Faltas del mes</span><strong>{{ faltas_mes }}</strong></div>
+  <div class="tarjeta"><span>Retardos del mes</span><strong>{{ retardos_mes }}</strong></div>
+  <div class="tarjeta"><span>Incidencias pendientes</span><strong>{{ incidencias_pendientes }}</strong></div>
+</section>
+
+<section class="dos-col">
+  <div class="panel">
+    <h2>Asistencia de la semana</h2>
+    <p class="sub">Asistencias registradas frente a turnos programados.</p>
+    <div class="barras">
+      {% for d in semana %}
+      <div class="barra-col {% if d.es_hoy %}hoy{% endif %}">
+        <div class="barra-caja">{% if not d.futuro %}<div class="barra-relleno" style="height: {{ d.pct }}%"></div>{% endif %}</div>
+        <small>{{ d.dia }}</small><small class="tenue">{% if d.futuro %}—{% else %}{{ d.pct }}%{% endif %}</small>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="panel">
+    <h2>Personal por área hoy</h2>
+    <p class="sub">Turnos de trabajo programados.</p>
+    {% for a in por_area %}
+    <div class="fila-barra"><span>{{ a.nombre }}</span><div class="riel"><div style="width: {{ a.pct }}%"></div></div><b>{{ a.total }}</b></div>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-cab"><div><h2>Accesos rápidos</h2></div></div>
+  <div class="accesos">
+    <a class="btn btn-claro" href="{% url 'colaboradores' %}">Consultar colaboradores</a>
+    <a class="btn btn-claro" href="{% url 'horarios' %}">Asignar horarios</a>
+    <a class="btn btn-claro" href="{% url 'registro_nuevo' 'asistencias' %}">Registrar asistencia</a>
+    <a class="btn btn-claro" href="{% url 'registro_nuevo' 'faltas' %}">Registrar falta</a>
+    <a class="btn btn-claro" href="{% url 'registro_nuevo' 'incidencias' %}">Registrar incidencia</a>
+    <a class="btn btn-claro" href="{% url 'registro_nuevo' 'amonestaciones' %}">Registrar amonestación</a>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-cab"><div><h2>Pendientes de seguimiento</h2><p class="sub">Incidencias que requieren atención.</p></div>
+    <a class="enlace" href="{% url 'registro_lista' 'incidencias' %}">Ver todas</a></div>
+  <div class="tabla-caja"><table class="tabla">
+    <thead><tr><th>Colaborador</th><th>Incidencia</th><th>Fecha</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+    {% for i in pendientes %}
+      <tr><td>{{ i.colaborador.nombre_completo }}</td><td>{{ i.get_tipo_display }}</td><td>{{ i.fecha|date:"d/m/Y" }}</td>
+          <td><span class="chip {% if i.estado == 'pendiente' %}amarillo{% else %}azul{% endif %}">{{ i.get_estado_display }}</span></td>
+          <td><a class="enlace" href="{% url 'registro_editar' 'incidencias' i.pk %}">Revisar</a></td></tr>
+    {% empty %}<tr><td colspan="5" class="vacio">No hay incidencias pendientes.</td></tr>{% endfor %}
+    </tbody></table></div>
+</section>
+{% endblock %}

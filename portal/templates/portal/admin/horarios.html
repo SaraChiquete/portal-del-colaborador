@@ -1,0 +1,48 @@
+{% extends 'portal/admin/base_admin.html' %}
+{% block titulo %}Horarios{% endblock %}
+{% block contenido %}
+<div class="encabezado"><div><h1>Gestión de horarios</h1><p class="sub">Organiza los horarios de trabajo por área y colaborador.</p></div>
+  <a class="btn btn-primario" href="{% url 'horarios_pdf' %}?area={{ area.id }}&semana={{ lunes|date:'Y-m-d' }}">Descargar PDF</a></div>
+
+<section class="panel">
+  <div class="panel-cab"><div><h2>Asignación de turnos</h2><p class="sub">Semana del {{ rango }}</p></div>
+    <div class="semana-nav">
+      <a class="btn btn-claro" href="?area={{ area.id }}&semana={{ anterior }}">Semana anterior</a>
+      <a class="btn btn-claro" href="?area={{ area.id }}&semana={{ hoy }}">Hoy</a>
+      <a class="btn btn-claro" href="?area={{ area.id }}&semana={{ siguiente }}">Semana siguiente</a></div></div>
+  <div class="pestanas">{% for a in areas %}<a href="?area={{ a.id }}&semana={{ lunes|date:'Y-m-d' }}" class="{% if a.id == area.id %}activa{% endif %}">{{ a.nombre }}</a>{% endfor %}</div>
+
+  <form method="post" class="asignar">{% csrf_token %}
+    <div class="asignar-col">
+      <h3>Colaboradores de {{ area.nombre }}</h3>
+      <label class="check marcar-todos"><input type="checkbox" data-marcar-todos="colaboradores"> Seleccionar todos</label>
+      {% for p in candidatos %}<label class="check"><input type="checkbox" name="colaboradores" value="{{ p.id }}"> {{ p.nombre_completo }} <small class="tenue">{{ p.numero_colaborador }}</small></label>
+      {% empty %}<p class="vacio">Esta área no tiene colaboradores asignados. Asigna el área desde la ficha del colaborador.</p>{% endfor %}
+    </div>
+    <div class="asignar-col">
+      <h3>Día y horario</h3>
+      <div class="dias-check">{% for d in dias %}<label class="dia-op"><input type="checkbox" name="dias" value="{{ d.fecha|date:'Y-m-d' }}"><span>{{ d.etiqueta }}<b>{{ d.fecha.day }}</b></span></label>{% endfor %}</div>
+      <div class="rejilla-form">
+        <div class="grupo"><label for="tipo">Tipo de jornada</label><select name="tipo" id="tipo"><option value="turno">Turno de trabajo</option><option value="descanso">Descanso</option></select></div>
+        <div class="grupo" data-solo-turno><label for="he">Hora de entrada</label><input type="time" name="hora_entrada" id="he" value="14:00"></div>
+        <div class="grupo" data-solo-turno><label for="hs">Hora de salida</label><input type="time" name="hora_salida" id="hs" value="22:00"></div>
+      </div>
+      <p class="ayuda">Si el colaborador ya tiene horario ese día, se reemplaza. Revisa la vista previa antes de guardar.</p>
+      <button class="btn btn-primario" type="submit">Guardar horarios</button>
+    </div>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Vista previa de la semana · {{ area.nombre }}</h2>
+  <div class="tabla-caja"><table class="tabla tabla-horario">
+    <thead><tr><th>Colaborador</th>{% for d in dias %}<th>{{ d.etiqueta }} {{ d.fecha.day }}</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for f in filas %}
+      <tr><td>{{ f.perfil.nombre_completo }}</td>
+        {% for h in f.celdas %}<td>{% if h %}<span class="{% if h.tipo == 'descanso' %}tenue{% endif %}">{{ h.rango }}</span>
+          <form method="post" action="{% url 'horario_eliminar' h.pk %}" class="quitar" data-confirmar="¿Quitar este horario?">{% csrf_token %}<button type="submit" title="Quitar horario" aria-label="Quitar horario">×</button></form>{% else %}—{% endif %}</td>{% endfor %}</tr>
+    {% empty %}<tr><td colspan="8" class="vacio">Aún no hay horarios para esta semana.</td></tr>{% endfor %}
+    </tbody></table></div>
+</section>
+{% endblock %}

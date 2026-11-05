@@ -1,0 +1,12 @@
+{% extends 'portal/admin/base_admin.html' %}
+{% block titulo %}{% if perfil %}Editar colaborador{% else %}Registrar colaborador{% endif %}{% endblock %}
+{% block contenido %}
+<div class="encabezado"><div><h1>{% if perfil %}Editar colaborador{% else %}Registrar colaborador{% endif %}</h1>
+  <p class="sub">Los datos del colaborador se usan para su acceso al portal.</p></div>
+  <a class="btn btn-claro" href="{% if perfil %}{% url 'colaborador_detalle' perfil.pk %}{% else %}{% url 'colaboradores' %}{% endif %}">Cancelar</a></div>
+<form method="post" class="panel formulario">
+  {% csrf_token %}
+  {% include 'portal/admin/_campos.html' %}
+  <div class="form-acciones"><button class="btn btn-primario" type="submit">Guardar colaborador</button></div>
+</form>
+{% endblock %}

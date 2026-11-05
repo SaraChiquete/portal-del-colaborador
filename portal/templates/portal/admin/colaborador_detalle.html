@@ -1,0 +1,47 @@
+{% extends 'portal/admin/base_admin.html' %}
+{% block titulo %}{{ p.nombre_completo }}{% endblock %}
+{% block contenido %}
+<div class="encabezado">
+  <div class="perfil-cab"><span class="avatar avatar-lg">{{ p.iniciales }}</span>
+    <div><h1>{{ p.nombre_completo }}</h1><p class="sub">N.º {{ p.numero_colaborador }} · {{ p.areas_texto }} · {{ p.puesto|default:"Sin puesto" }}</p></div>
+    <span class="chip {% if p.activo %}verde{% else %}gris{% endif %}">{% if p.activo %}Activo{% else %}Inactivo{% endif %}</span></div>
+  <div class="acciones-cab"><a class="btn btn-claro" href="{% url 'colaboradores' %}">Volver al listado</a>
+    <a class="btn btn-primario" href="{% url 'colaborador_editar' p.pk %}">Editar colaborador</a></div>
+</div>
+
+<section class="dos-col">
+  <div class="panel"><h2>Datos personales y laborales</h2>
+    <dl class="datos">
+      <div><dt>Correo electrónico</dt><dd>{{ p.usuario.email|default:"—" }}</dd></div>
+      <div><dt>Teléfono</dt><dd>{{ p.telefono|default:"—" }}</dd></div>
+      <div><dt>Fecha de ingreso</dt><dd>{{ p.fecha_ingreso|date:"d/m/Y"|default:"—" }}</dd></div>
+      <div><dt>Áreas asignadas</dt><dd>{{ p.areas_texto }}</dd></div>
+    </dl></div>
+  <div class="panel"><h2>Desempeño</h2>
+    <p class="estrellas-grande" aria-label="Promedio de estrellas">{% if promedio %}{{ promedio|floatformat:1 }} <span class="estrellas">★</span>{% else %}Sin calificar{% endif %}</p>
+    <form method="post" action="{% url 'calificar' p.pk %}" class="calificar">{% csrf_token %}
+      <div class="selector-estrellas">{% for r in form_cal.estrellas %}{{ r.tag }}<label for="{{ r.id_for_label }}" title="{{ r.choice_label }} estrellas">★</label>{% endfor %}</div>
+      {{ form_cal.comentario }}
+      <button class="btn btn-primario" type="submit">Guardar calificación</button>
+    </form>
+    {% for c in calificaciones %}<p class="item-simple"><span class="estrellas">{{ c.estrellas }}★</span> {{ c.comentario|default:"Sin comentario" }} <small>{{ c.fecha|date:"d/m/Y" }}</small></p>{% endfor %}
+  </div>
+</section>
+
+<section class="panel"><div class="panel-cab"><div><h2>Horario de la semana</h2><p class="sub">{{ rango }}</p></div></div>
+  <div class="tabla-caja"><table class="tabla"><thead><tr>{% for d in semana %}<th>{{ d.dia }} {{ d.fecha.day }}</th>{% endfor %}</tr></thead>
+    <tbody><tr>{% for d in semana %}<td>{% if d.horario %}{{ d.horario.rango }}<br><small class="tenue">{{ d.horario.area }}</small>{% else %}—{% endif %}</td>{% endfor %}</tr></tbody></table></div></section>
+
+<section class="dos-col">
+  <div class="panel"><div class="panel-cab"><h2>Asistencias recientes</h2><a class="enlace" href="{% url 'registro_nuevo' 'asistencias' %}?colaborador={{ p.pk }}">Registrar</a></div>
+    {% for a in asistencias %}<p class="item-simple">{{ a.fecha|date:"d/m/Y" }} · {{ a.hora_entrada|time:"H:i" }}{% if a.hora_salida %}–{{ a.hora_salida|time:"H:i" }}{% endif %} <span class="chip {% if a.estado == 'retardo' %}amarillo{% else %}verde{% endif %}">{{ a.get_estado_display }}</span></p>{% empty %}<p class="vacio">Sin asistencias registradas.</p>{% endfor %}</div>
+  <div class="panel"><div class="panel-cab"><h2>Faltas</h2><a class="enlace" href="{% url 'registro_nuevo' 'faltas' %}?colaborador={{ p.pk }}">Registrar</a></div>
+    {% for f in faltas %}<p class="item-simple">{{ f.fecha|date:"d/m/Y" }} · {{ f.motivo }} <span class="chip {% if f.justificada %}verde{% else %}rojo{% endif %}">{% if f.justificada %}Justificada{% else %}Sin justificar{% endif %}</span></p>{% empty %}<p class="vacio">Sin faltas registradas.</p>{% endfor %}</div>
+</section>
+<section class="dos-col">
+  <div class="panel"><div class="panel-cab"><h2>Incidencias</h2><a class="enlace" href="{% url 'registro_nuevo' 'incidencias' %}?colaborador={{ p.pk }}">Registrar</a></div>
+    {% for i in incidencias %}<p class="item-simple">{{ i.fecha|date:"d/m/Y" }} · {{ i.get_tipo_display }} <span class="chip {% if i.estado == 'resuelta' %}verde{% elif i.estado == 'pendiente' %}amarillo{% else %}azul{% endif %}">{{ i.get_estado_display }}</span></p>{% empty %}<p class="vacio">Sin incidencias registradas.</p>{% endfor %}</div>
+  <div class="panel"><div class="panel-cab"><h2>Amonestaciones</h2><a class="enlace" href="{% url 'registro_nuevo' 'amonestaciones' %}?colaborador={{ p.pk }}">Registrar</a></div>
+    {% for a in amonestaciones %}<p class="item-simple">{{ a.fecha|date:"d/m/Y" }} · {{ a.motivo }}</p>{% empty %}<p class="vacio">Sin amonestaciones registradas.</p>{% endfor %}</div>
+</section>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends 'portal/admin/base_admin.html' %}
+{% block titulo %}{{ c.titulo }}{% endblock %}
+{% block contenido %}
+<div class="encabezado"><div><h1>{% if obj %}Editar{% else %}Registrar{% endif %} {{ c.singular }}</h1>
+  <p class="sub">Completa la información para guardar el registro. Se anotará en la bitácora.</p></div>
+  <a class="btn btn-claro" href="{% url 'registro_lista' clave %}">Cancelar</a></div>
+<form method="post" class="panel formulario">
+  {% csrf_token %}
+  {% include 'portal/admin/_campos.html' %}
+  <div class="form-acciones"><button class="btn btn-primario" type="submit">Guardar {{ c.singular }}</button></div>
+</form>
+{% endblock %}

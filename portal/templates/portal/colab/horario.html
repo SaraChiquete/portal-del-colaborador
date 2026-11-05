@@ -1,0 +1,17 @@
+{% extends 'portal/colab/base_colab.html' %}
+{% block titulo %}Mi horario{% endblock %}
+{% block contenido %}
+<h1>Mi horario</h1><p class="sub">{{ p.areas_texto }} · Cinépolis Sendero Tijuana</p>
+<div class="semana-sel"><a href="?semana={{ anterior }}" aria-label="Semana anterior">‹</a><div><strong>{{ rango }}</strong></div><a href="?semana={{ siguiente }}" aria-label="Semana siguiente">›</a></div>
+<div class="dias">
+{% for d in dias %}
+  <div class="dia {% if d.es_hoy %}hoy{% endif %}">
+    <div class="dia-fecha"><small>{{ d.nombre|slice:":3" }}</small><b>{{ d.fecha.day }}</b></div>
+    <div>{% if d.horario and d.horario.tipo == 'turno' %}<strong>{{ d.horario.hora_entrada|time:"H:i" }}–{{ d.horario.hora_salida|time:"H:i" }} h</strong><small>{{ d.horario.area }}</small>
+      {% elif d.horario %}<strong>Descanso</strong><small>Día libre</small>
+      {% else %}<strong class="tenue">Sin asignar</strong>{% endif %}</div>
+    {% if d.es_hoy %}<span class="chip azul">Hoy</span>{% endif %}
+  </div>
+{% endfor %}
+</div>
+{% endblock %}

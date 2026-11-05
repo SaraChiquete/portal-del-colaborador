@@ -1,0 +1,26 @@
+{% extends 'portal/admin/base_admin.html' %}
+{% block titulo %}Colaboradores{% endblock %}
+{% block contenido %}
+<div class="encabezado"><div><h1>Colaboradores</h1><p class="sub">Consulta la plantilla de colaboradores de la unidad.</p></div>
+  <a class="btn btn-primario" href="{% url 'colaborador_nuevo' %}">Registrar colaborador</a></div>
+<section class="panel">
+  <form class="filtros" method="get">
+    <input class="campo" type="search" name="q" value="{{ q }}" placeholder="Buscar por nombre o número de colaborador">
+    <select class="campo" name="area"><option value="">Todas las áreas</option>
+      {% for a in areas %}<option value="{{ a.id }}" {% if area == a.id|stringformat:'s' %}selected{% endif %}>{{ a.nombre }}</option>{% endfor %}</select>
+    <button class="btn btn-primario" type="submit">Filtrar</button>
+    <a class="btn btn-claro" href="{% url 'colaboradores' %}">Limpiar</a>
+  </form>
+  <div class="tabla-caja"><table class="tabla">
+    <thead><tr><th>Colaborador</th><th>Número</th><th>Áreas</th><th>Puesto</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+    {% for p in lista %}
+      <tr><td><span class="avatar avatar-sm">{{ p.iniciales }}</span> {{ p.nombre_completo }}</td><td>{{ p.numero_colaborador }}</td>
+          <td>{{ p.areas_texto }}</td><td>{{ p.puesto|default:"—" }}</td>
+          <td><span class="chip {% if p.activo %}verde{% else %}gris{% endif %}">{% if p.activo %}Activo{% else %}Inactivo{% endif %}</span></td>
+          <td class="acciones"><a class="enlace" href="{% url 'colaborador_detalle' p.pk %}">Consultar</a></td></tr>
+    {% empty %}<tr><td colspan="6" class="vacio">No se encontraron colaboradores con esos filtros.</td></tr>{% endfor %}
+    </tbody></table></div>
+  <p class="pie-tabla">{{ lista|length }} colaborador(es)</p>
+</section>
+{% endblock %}

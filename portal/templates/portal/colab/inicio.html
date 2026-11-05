@@ -1,0 +1,32 @@
+{% extends 'portal/colab/base_colab.html' %}
+{% block titulo %}Inicio{% endblock %}
+{% block contenido %}
+<h1>Hola, {{ p.usuario.first_name }}</h1>
+<p class="sub">{{ fecha }}</p>
+
+<section class="turno-hoy">
+  <small>Tu turno de hoy</small>
+  {% if turno and turno.tipo == 'turno' %}<strong>{{ turno.hora_entrada|time:"H:i" }}–{{ turno.hora_salida|time:"H:i" }} h</strong><span>{{ turno.area }}</span>
+  {% elif turno %}<strong>Descanso</strong><span>Disfruta tu día libre</span>
+  {% else %}<strong>Sin turno asignado</strong><span>Consulta con tu responsable</span>{% endif %}
+</section>
+
+<h2>Mi resumen del mes</h2>
+<section class="tarjetas tarjetas-3">
+  <div class="tarjeta"><span>Asistencias</span><strong>{{ asistencias }}</strong></div>
+  <div class="tarjeta"><span>Retardos</span><strong>{{ retardos }}</strong></div>
+  <div class="tarjeta"><span>Faltas</span><strong>{{ faltas }}</strong></div>
+</section>
+
+{% if logros %}<a class="logro-banner" href="{% url 'portal_logros' %}"><span class="estrella-anim">★</span><div><strong>{{ logros.0.0 }}</strong><small>{{ logros.0.1 }}</small></div></a>{% endif %}
+
+<h2>Mi información</h2>
+<nav class="lista-nav">
+  <a href="{% url 'portal_perfil' %}"><div><strong>Mi perfil</strong><small>Datos personales y laborales</small></div><span>›</span></a>
+  <a href="{% url 'portal_horario' %}"><div><strong>Mi horario</strong><small>Tu turno de la semana</small></div><span>›</span></a>
+  <a href="{% url 'portal_faltas' %}"><div><strong>Mis faltas</strong><small>{{ faltas }} este mes</small></div><span>›</span></a>
+  <a href="{% url 'portal_amonestaciones' %}"><div><strong>Mis amonestaciones</strong><small>{{ amonestaciones }} registrada(s)</small></div><span>›</span></a>
+  <a href="{% url 'portal_eventos' %}"><div><strong>Eventos</strong><small>Próximas actividades de la unidad</small></div><span>›</span></a>
+  <a href="{% url 'portal_logros' %}"><div><strong>Mis logros</strong><small>Insignias y calificación de desempeño</small></div><span>›</span></a>
+</nav>
+{% endblock %}

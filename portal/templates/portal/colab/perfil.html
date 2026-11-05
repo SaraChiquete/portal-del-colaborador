@@ -1,0 +1,17 @@
+{% extends 'portal/colab/base_colab.html' %}
+{% block titulo %}Mi perfil{% endblock %}
+{% block contenido %}
+<div class="perfil-centro"><span class="avatar avatar-lg">{{ p.iniciales }}</span><h1>{{ p.nombre_completo }}</h1>
+  <p class="sub">N.º de colaborador {{ p.numero_colaborador }}</p><span class="chip verde">Activo</span></div>
+<section class="panel"><h2>Datos personales</h2>
+  <dl class="datos"><div><dt>Nombre completo</dt><dd>{{ p.nombre_completo }}</dd></div>
+    <div><dt>Correo electrónico</dt><dd>{{ p.usuario.email|default:"—" }}</dd></div>
+    <div><dt>Teléfono</dt><dd>{{ p.telefono|default:"—" }}</dd></div></dl></section>
+<section class="panel"><h2>Información laboral</h2>
+  <dl class="datos"><div><dt>Áreas</dt><dd>{{ p.areas_texto }}</dd></div>
+    <div><dt>Puesto</dt><dd>{{ p.puesto|default:"—" }}</dd></div>
+    <div><dt>Fecha de ingreso</dt><dd>{{ p.fecha_ingreso|date:"d/m/Y"|default:"—" }}</dd></div>
+    <div><dt>Conjunto</dt><dd>Cinépolis Sendero Tijuana</dd></div></dl></section>
+<p class="nota">¿Algún dato es incorrecto? Solicita su actualización a Recursos Humanos.</p>
+<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-claro btn-bloque" type="submit">Cerrar sesión</button></form>
+{% endblock %}

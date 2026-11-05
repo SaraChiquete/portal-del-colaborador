@@ -1,0 +1,12 @@
+{% extends 'portal/colab/base_colab.html' %}
+{% block titulo %}Mis logros{% endblock %}
+{% block contenido %}
+<h1>Mis logros</h1><p class="sub">Reconocimientos por tu trabajo y compromiso.</p>
+<section class="panel desempeno"><h2>Calificación de desempeño</h2>
+  {% if promedio %}<div class="estrellas-fila" aria-label="{{ promedio_texto }} de 5 estrellas">{% for n in "12345" %}<span class="{% if forloop.counter <= redondeo %}on{% endif %}">★</span>{% endfor %}</div>
+    <p><strong>{{ promedio_texto }}</strong> de 5</p>{% if ultima.comentario %}<p class="sub">“{{ ultima.comentario }}”</p>{% endif %}
+  {% else %}<p class="vacio">Aún no tienes calificaciones registradas.</p>{% endif %}</section>
+{% for titulo, mensaje in logros %}
+<article class="panel logro"><span class="estrella-anim">★</span><div><strong>{{ titulo }}</strong><p>{{ mensaje }}</p></div></article>
+{% empty %}<div class="panel vacio">Todavía no tienes logros este mes. ¡Sigue adelante!</div>{% endfor %}
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'portal/base.html' %}
+{% load static %}
+{% block clase_body %}app-colab{% endblock %}
+{% block cuerpo %}
+<div class="movil">
+  <header class="movil-cab">
+    <div><img class="movil-logo" src="{% static 'portal/img/cinepolis-wordmark.png' %}" alt="Cinépolis"><small>Portal del Colaborador</small></div>
+    <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-claro btn-sm" type="submit">Salir</button></form>
+  </header>
+  <main class="movil-cuerpo">
+    {% for m in messages %}<div class="aviso aviso-{{ m.tags }}">{{ m }}</div>{% endfor %}
+    {% block contenido %}{% endblock %}
+  </main>
+  <nav class="movil-nav">
+    <a href="{% url 'portal_inicio' %}" class="{% if tab == 'inicio' %}activo{% endif %}"><span>⌂</span>Inicio</a>
+    <a href="{% url 'portal_horario' %}" class="{% if tab == 'horario' %}activo{% endif %}"><span>◷</span>Mi horario</a>
+    <a href="{% url 'portal_faltas' %}" class="{% if tab == 'registros' %}activo{% endif %}"><span>☰</span>Registros</a>
+    <a href="{% url 'portal_perfil' %}" class="{% if tab == 'perfil' %}activo{% endif %}"><span>☺</span>Mi perfil</a>
+  </nav>
+</div>
+{% endblock %}

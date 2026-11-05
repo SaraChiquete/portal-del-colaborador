@@ -1,0 +1,8 @@
+<div class="paginacion">
+  <span>Mostrando {{ pagina.start_index }}-{{ pagina.end_index }} de {{ pagina.paginator.count }}</span>
+  <div>
+    {% if pagina.has_previous %}<a class="btn btn-claro" href="?{% if qs %}{{ qs }}&{% endif %}page={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+    <span class="pag-actual">Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}<a class="btn btn-claro" href="?{% if qs %}{{ qs }}&{% endif %}page={{ pagina.next_page_number }}">Siguiente</a>{% endif %}
+  </div>
+</div>

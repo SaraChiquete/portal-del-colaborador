@@ -1,0 +1,23 @@
+{% extends 'portal/admin/base_admin.html' %}
+{% block titulo %}Bitácora{% endblock %}
+{% block contenido %}
+<div class="encabezado"><div><h1>Bitácora de acciones</h1><p class="sub">Qué cambio se realizó, quién lo hizo y cuándo.</p></div></div>
+<section class="panel">
+  <form class="filtros" method="get">
+    <input class="campo" type="search" name="q" value="{{ q }}" placeholder="Buscar por usuario o descripción">
+    <select class="campo" name="modulo"><option value="">Todos los módulos</option>
+      {% for m in modulos %}<option value="{{ m }}" {% if m == modulo %}selected{% endif %}>{{ m }}</option>{% endfor %}</select>
+    <button class="btn btn-primario" type="submit">Filtrar</button>
+    <a class="btn btn-claro" href="{% url 'bitacora' %}">Limpiar</a>
+  </form>
+  <div class="tabla-caja"><table class="tabla">
+    <thead><tr><th>Fecha y hora</th><th>Usuario</th><th>Acción</th><th>Módulo</th><th>Descripción</th></tr></thead>
+    <tbody>
+    {% for b in pagina %}
+      <tr><td>{{ b.fecha_hora|date:"d/m/Y H:i" }}</td><td>{{ b.usuario.get_full_name|default:b.usuario.username }}</td>
+          <td>{{ b.accion }}</td><td>{{ b.modulo }}</td><td>{{ b.descripcion }}</td></tr>
+    {% empty %}<tr><td colspan="5" class="vacio">Aún no hay acciones registradas.</td></tr>{% endfor %}
+    </tbody></table></div>
+  {% include 'portal/admin/_paginacion.html' %}
+</section>
+{% endblock %}

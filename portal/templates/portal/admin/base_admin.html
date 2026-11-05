@@ -1,0 +1,41 @@
+{% extends 'portal/base.html' %}
+{% load static %}
+{% block clase_body %}app-admin{% endblock %}
+{% block cuerpo %}
+<div class="shell">
+  <aside class="lateral" id="lateral">
+    <img class="lateral-logo" src="{% static 'portal/img/cinepolis-wordmark.png' %}" alt="Cinépolis">
+    <div class="lateral-conjunto">
+      <small>Espacio de trabajo</small>
+      <strong>Cinépolis Sendero Tijuana</strong>
+      <span>Administración de personal</span>
+    </div>
+    <nav class="menu">
+      <a href="{% url 'panel' %}" class="{% if seccion == 'panel' %}activo{% endif %}">Resumen</a>
+      <a href="{% url 'colaboradores' %}" class="{% if seccion == 'colaboradores' %}activo{% endif %}">Colaboradores</a>
+      <a href="{% url 'horarios' %}" class="{% if seccion == 'horarios' %}activo{% endif %}">Horarios</a>
+      <a href="{% url 'registro_lista' 'asistencias' %}" class="{% if seccion == 'asistencias' %}activo{% endif %}">Asistencias</a>
+      <a href="{% url 'registro_lista' 'faltas' %}" class="{% if seccion == 'faltas' %}activo{% endif %}">Faltas</a>
+      <a href="{% url 'registro_lista' 'incidencias' %}" class="{% if seccion == 'incidencias' %}activo{% endif %}">Incidencias</a>
+      <a href="{% url 'registro_lista' 'amonestaciones' %}" class="{% if seccion == 'amonestaciones' %}activo{% endif %}">Amonestaciones</a>
+      <a href="{% url 'registro_lista' 'eventos' %}" class="{% if seccion == 'eventos' %}activo{% endif %}">Eventos</a>
+      <a href="{% url 'bitacora' %}" class="{% if seccion == 'bitacora' %}activo{% endif %}">Bitácora</a>
+    </nav>
+    <div class="lateral-usuario">
+      <span class="avatar">{{ request.user.perfil.iniciales }}</span>
+      <div><strong>{{ request.user.perfil.nombre_completo }}</strong><small>{{ request.user.perfil.get_rol_display }}</small></div>
+    </div>
+  </aside>
+  <div class="principal">
+    <header class="barra">
+      <button class="btn-menu" type="button" data-menu aria-label="Abrir menú">☰</button>
+      <span class="barra-titulo">Portal del Colaborador</span>
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="btn btn-claro" type="submit">Cerrar sesión</button></form>
+    </header>
+    <main class="contenido">
+      {% for m in messages %}<div class="aviso aviso-{{ m.tags }}">{{ m }}</div>{% endfor %}
+      {% block contenido %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

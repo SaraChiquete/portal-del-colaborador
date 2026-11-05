@@ -1,0 +1,14 @@
+{% if form.non_field_errors %}<div class="aviso aviso-error">{{ form.non_field_errors }}</div>{% endif %}
+<div class="rejilla-form">
+{% for campo in form %}
+  <div class="grupo {% if campo.field.widget.input_type == 'checkbox' or campo.field.widget.allow_multiple_selected %}grupo-ancho{% endif %}">
+    {% if campo.field.widget.input_type == 'checkbox' %}
+      <label class="check"><span>{{ campo }}</span> {{ campo.label }}</label>
+    {% else %}
+      <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>{{ campo }}
+    {% endif %}
+    {% if campo.help_text %}<small class="ayuda">{{ campo.help_text }}</small>{% endif %}
+    {% for e in campo.errors %}<small class="error">{{ e }}</small>{% endfor %}
+  </div>
+{% endfor %}
+</div>

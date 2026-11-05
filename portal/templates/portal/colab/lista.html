@@ -1,0 +1,14 @@
+{% extends 'portal/colab/base_colab.html' %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<h1>{{ titulo }}</h1><p class="sub">{{ subtitulo }}</p>
+{% if tab == 'registros' %}<div class="pestanas pestanas-movil"><a href="{% url 'portal_faltas' %}" class="{% if titulo == 'Mis faltas' %}activa{% endif %}">Faltas</a><a href="{% url 'portal_amonestaciones' %}" class="{% if titulo == 'Mis amonestaciones' %}activa{% endif %}">Amonestaciones</a></div>{% endif %}
+{% for i in items %}
+<article class="panel registro">
+  <div class="registro-cab"><small>{{ i.fecha|date:"d/m/Y" }}</small>{% if i.chip %}<span class="chip {{ i.clase }}">{{ i.chip }}</span>{% endif %}</div>
+  <strong>{{ i.titulo }}</strong>
+  {% if i.extra %}<small class="tenue">{{ i.extra }}</small>{% endif %}
+  {% if i.texto %}<p>{{ i.texto }}</p>{% endif %}
+</article>
+{% empty %}<div class="panel vacio">{{ vacio }}</div>{% endfor %}
+{% endblock %}
